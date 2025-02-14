@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "chip8wasm",
   "resources": {
-    "hash": "sha256-EyZP3TuzJQ27oT+YCZg0qa/AdyA3XA4VB7G62/uTD2g=",
+    "hash": "sha256-Vhtezpob6xU+WPKCRk6SLzzorRmztvobE6JTGSilvsA=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-B6DNRvFeCUi3jbx9uKpuj+hV9cN0KG4RdZj1FgBZwj8="
     },
@@ -18,7 +18,7 @@
     },
     "coreAssembly": {},
     "assembly": {
-      "chip8wasm.wasm": "sha256-7T4yjWmUwt9mf/kvnYkCepI7th0jS72ElcJJqGxrgC0=",
+      "chip8wasm.wasm": "sha256-0Xkxj/KrB+vk4dKMxok8gnA9WYYXzpG/taG+w0OGz0I=",
       "Microsoft.AspNetCore.Components.Forms.wasm": "sha256-70I0Lw89C4AA5nPSRfm3J9jWRzusgkg+q7+dLbIK3Zc=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-DgdFtQMzAAcfwBn7WWVRZGQzYjCuJ5+iypLLlhSY2+c=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-WH4o3nu+hopFH74K319+XSItpdbBarSQH9WveOcR2Sg=",
