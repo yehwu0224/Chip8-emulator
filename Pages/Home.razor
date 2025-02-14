@@ -1,0 +1,204 @@
+﻿@page "/"
+@inject IJSRuntime JS
+@inject NavigationManager MyNavigationManager
+@using chip8wasm.Shared
+
+<PageTitle>Home</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <h1>Chip-8 Emulator</h1>
+    Display screen (60fps)
+    <MudGrid>
+        <MudItem xs="7">
+            <MudStack Spacing="3">
+                <canvas id="displayCanvas" width="640" height="320" style="border:1px solid #21292D;"></canvas>
+                <MudSelect @bind-Value="_currentRom" Label="Current ROM">
+                    @foreach (var rom in Roms)
+                    {
+                        <MudSelectItem Value="rom">@rom</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudPaper Outlined="true" Class="border-dashed p-4">
+                    <MudText Class="mb-4">This is a simple Chip8 emulator written in C# with .NET8.</MudText>
+                    <MudGrid Class="d-flex align-baseline">
+                        <MudItem xs="6">
+                            <MudStack Row="true" Spacing="1" Class="mb-1">
+                                <MudPaper id="key1" Class="py-3 px-5">1</MudPaper>
+                                <MudPaper id="key2" Class="py-3 px-5">2</MudPaper>
+                                <MudPaper id="key3" Class="py-3 px-5">3</MudPaper>
+                                <MudPaper id="key4" Class="py-3 px-5">C</MudPaper>
+                            </MudStack>
+                            <MudStack Row="true" Spacing="1" Class="mb-1">
+                                <MudPaper id="keyq" Class="py-3 px-5">4</MudPaper>
+                                <MudPaper id="keyw" Class="py-3 px-5">5</MudPaper>
+                                <MudPaper id="keye" Class="py-3 px-5">6</MudPaper>
+                                <MudPaper id="keyr" Class="py-3 px-5">D</MudPaper>
+                            </MudStack>
+                            <MudStack Row="true" Spacing="1" Class="mb-1">
+                                <MudPaper id="keya" Class="py-3 px-5">7</MudPaper>
+                                <MudPaper id="keys" Class="py-3 px-5">8</MudPaper>
+                                <MudPaper id="keyd" Class="py-3 px-5">9</MudPaper>
+                                <MudPaper id="keyf" Class="py-3 px-5">E</MudPaper>
+                            </MudStack>
+                            <MudStack Row="true" Spacing="1" Class="mb-1">
+                                <MudPaper id="keyz" Class="py-3 px-5">A</MudPaper>
+                                <MudPaper id="keyx" Class="py-3 px-5">0</MudPaper>
+                                <MudPaper id="keyc" Class="py-3 px-5">B</MudPaper>
+                                <MudPaper id="keyv" Class="py-3 px-5">F</MudPaper>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="6" Class="d-flex justify-center">
+                            <MudStack>
+                                <MudText>keypad mapping</MudText>
+                                <MudPaper Class="d-flex flex-wrap justify-center" MaxWidth="120px" Elevation="0">
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">1</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">2</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">3</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">4</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">Q</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">W</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">E</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">R</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">A</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">S</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">D</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">F</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">Z</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">X</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">C</MudPaper>
+                                    <MudPaper Class="px-2 py-1" Height="30" Width="30px" Square="true" Outlined="true">V</MudPaper>
+                                </MudPaper>
+                            </MudStack>
+                            
+                        </MudItem>
+                    </MudGrid>
+
+                </MudPaper>
+
+            </MudStack>
+        </MudItem>
+        <MudItem xs="5">
+            <MudStack>
+                <MudPaper Outlined="true" Class="border-dashed p-4">
+                    <MudSimpleTable Dense="true" Bordered="true">
+                        <thead>
+                            <tr class="text-center">
+                                <th colspan="4">Chip-8 Specifications</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2">PC</td>
+                                <td colspan="2" id="pc_label">0x000</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">I</td>
+                                <td colspan="2" id="i_label">0x000</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">DelayTimer</td>
+                                <td colspan="2" id="dt_label">0x000</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">SoundTimer</td>
+                                <td colspan="2" id="st_label">0x000</td>
+                            </tr>
+
+                            @for (int i = 0; i < 8; i++)
+                            {
+                                var x = i + 8;
+                                <tr>
+                                    <td>V[@i]</td>
+                                    <td id="@("v"+i)">0x00</td>
+                                    <td>V[@x]</td>
+                                    <td id="@("v"+x )">0x00</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </MudSimpleTable>
+                </MudPaper>
+
+                <MudPaper Outlined="true" Class="border-dashed p-5 d-flex justify-center">
+                    <MudLink Href="#" Underline="Underline.None" Color="Color.Default">
+                        <MudIcon Icon="@Icons.Custom.Brands.GitHub" Title="GitHub" /> Chip-8 emulator
+                    </MudLink>
+                </MudPaper>
+
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+
+
+@code {
+    private Chip8 _cpu = new Chip8();
+    private DotNetObjectReference<Home>? _objRef;
+    private string _currentRom = "IBM_Logo.ch8";
+    public string[] Roms = { "IBM_Logo.ch8", "Chip8_Picture.ch8", 
+                             "Chip8 emulator Logo [Garstyciuks].ch8",
+                             "Pong (alt).ch8",
+                             "Brix [Andreas Gustafsson, 1990].ch8", 
+                             "Tetris [Fran Dachille, 1991].ch8", 
+                             "Trip8 Demo (2008) [Revival Studios].ch8",
+                             "Space Invaders [David Winter].ch8" };
+
+    private static readonly Dictionary<string, byte> _keyToByteMap = new Dictionary<string, byte>
+    {
+        { "1", 0x1 }, { "2", 0x2 }, { "3", 0x3 }, { "4", 0xc },
+        { "q", 0x4 }, { "w", 0x5 }, { "e", 0x6 }, { "r", 0xd },
+        { "a", 0x7 }, { "s", 0x8 }, { "d", 0x9 }, { "f", 0xe },
+        { "z", 0xa }, { "x", 0x0 }, { "c", 0xb }, { "v", 0xf }
+    };
+
+
+    private async Task<byte[]> GetRomData()
+    {
+        var url = MyNavigationManager.Uri;
+        var client = new HttpClient();
+        var byteArray = await client.GetByteArrayAsync($"{url}roms/{_currentRom}");
+        return byteArray;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("setupCanvas", _cpu.Display);
+            await JS.InvokeVoidAsync("addKeyListener", _objRef); // 添加鍵盤監聽
+        }
+        await UpdateCanvas();
+    }
+
+    private async Task UpdateCanvas()
+    {
+        var rom = await GetRomData();
+        Console.WriteLine("rom length: " + rom.Length);
+        _cpu.Reset();
+        _cpu.LoadProgram(rom);
+
+        while (true)
+        {
+            _cpu.ExcuteOpcode();
+            await JS.InvokeVoidAsync("updateDisplay", _cpu.Display, _cpu.PC, _cpu.I, _cpu.DelayTimer, _cpu.SoundTimer, _cpu.Registers);
+            await Task.Delay(1000 / 60); // Chip8 定義畫面更新率60Hz
+        }
+    }
+
+    [JSInvokable]
+    public void HandleKeydown(string key)
+    {
+        //Console.WriteLine($"Key down: {key}");
+        _cpu.Keydown(_keyToByteMap[key]);
+    }
+
+    [JSInvokable]
+    public void HandleKeyup(string key)
+    {
+        //Console.WriteLine($"Key up: {key}");
+        _cpu.Keyup(_keyToByteMap[key]);
+    }
+}
