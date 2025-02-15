@@ -9,6 +9,7 @@ This is a simple Chip-8 emulator implemented using Blazor WebAssembly.
 - Real-time debugging and monitoring
 
 ## Demo
+https://yehwu0224.github.io/Chip8-emulator/
 
 ## Keyboard layout
 The original keyboard layout is mapped to computer keyboard as follows:
